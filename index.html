@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .stats {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .error {
+            background-color: #fee;
+            color: #c00;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #fcc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9f9f9;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+            color: #333;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Events List</h1>
+        <div id="stats" class="stats"></div>
+
+        <div id="loading" class="loading">Loading events...</div>
+        <div id="error" class="error" style="display: none;"></div>
+
+        <table id="eventsTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Pets Allowed</th>
+                </tr>
+            </thead>
+            <tbody id="eventsBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/events';
+
+        async function fetchEvents() {
+            try {
+                const response = await fetch(API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const events = await response.json();
+                console.log('Events received:', events);
+                displayEvents(events);
+            } catch (error) {
+                showError(`Failed to fetch events: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayEvents(events) {
+            const eventsBody = document.getElementById('eventsBody');
+            const eventsTable = document.getElementById('eventsTable');
+            const statsElement = document.getElementById('stats');
+
+            if (!events || events.length === 0) {
+                statsElement.textContent = 'No events found.';
+                return;
+            }
+
+            statsElement.textContent = `Total Events: ${events.length}`;
+            eventsTable.style.display = 'table';
+
+            eventsBody.innerHTML = events.map(event => `
+                <tr>
+                    <td>${event.id || 'N/A'}</td>
+                    <td>${escapeHtml(event.title) || 'N/A'}</td>
+                    <td>${escapeHtml(event.category) || 'N/A'}</td>
+                    <td>${escapeHtml(event.description) || 'N/A'}</td>
+                    <td>${escapeHtml(event.location) || 'N/A'}</td>
+                    <td>${escapeHtml(event.date) || 'N/A'}</td>
+                    <td>${escapeHtml(event.time) || 'N/A'}</td>
+                    <td>${event.petsAllowed ? 'Yes' : 'No'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideLoading() {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'none';
+        }
+
+        function escapeHtml(text) {
+            if (text == null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchEvents);
+    </script>
+</body>
+</html>
