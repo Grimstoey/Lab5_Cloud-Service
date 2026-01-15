@@ -5,6 +5,7 @@ import cors, { CorsOptions } from "cors";
 import multer from "multer";
 import { uploadFile } from "./services/UploadFileService";
 import dotenv from 'dotenv';
+import authRoute from './routes/AuthRoute';
 
 
 dotenv.config();
@@ -28,6 +29,9 @@ webApp.use(express.static(path.join(process.cwd())));
 app.use(cors(corsOptions));
 
 app.use("/events", eventRoute);
+app.use('/api/v1/auth', authRoute);
+
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
