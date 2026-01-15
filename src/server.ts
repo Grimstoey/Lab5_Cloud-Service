@@ -13,7 +13,8 @@ const app = express();
 const webApp = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-const port = 3000;
+const port = process.env.PORT || 3000;
+
 const webPort = 5050;
 
 const corsOptions: CorsOptions = {
