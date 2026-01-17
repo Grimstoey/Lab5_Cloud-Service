@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
+//สร้างชื่อไฟล์ใหม่แบบยาวๆ แบบอ่านไม่รู้เรื่อง
 function generateSaltedFilename(originalName: string): string {
   const salt = randomBytes(16).toString("hex");
   const extension = originalName.split(".").pop();

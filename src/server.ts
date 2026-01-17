@@ -9,6 +9,7 @@ import authRoute from './routes/AuthRoute';
 
 
 dotenv.config();
+//env โหลดครั้งเดียวทุกครั้งตอนเปิด sever ถ้าเปลี่ยนค่าต้อง run server ใหม่
 
 const app = express();
 const webApp = express();
@@ -58,6 +59,7 @@ app.get("/presignedUrl", async (req: Request, res: Response) => {
 });
 
 app.post("/upload", upload.single("file"), async (req: any, res: any) => {
+  //"file" ทดสอบ api ต้องใช้ชื่อนี้
   try {
     const file = req.file;
     if (!file) {
